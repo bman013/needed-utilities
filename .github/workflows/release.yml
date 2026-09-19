@@ -1,0 +1,43 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Verify tag matches addon version
+        run: |
+          set -euo pipefail
+          TOC_VERSION=$(grep -m1 '^## Version:' NeededUtilities/NeededUtilities.toc | sed 's/^## Version:[[:space:]]*//')
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          if [ "$TOC_VERSION" != "$TAG_VERSION" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match NeededUtilities.toc version $TOC_VERSION" >&2
+            exit 1
+          fi
+
+      - name: Build release zip
+        run: ./scripts/package.sh
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          PRERELEASE_FLAG=()
+          if [[ "$GITHUB_REF_NAME" == *-* ]]; then
+            PRERELEASE_FLAG=(--prerelease)
+          fi
+          gh release create "$GITHUB_REF_NAME" dist/*.zip \
+            --title "$GITHUB_REF_NAME" \
+            --generate-notes \
+            "${PRERELEASE_FLAG[@]}"

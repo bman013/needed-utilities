@@ -73,6 +73,23 @@ existing users' settings get migrated forward instead of reset.
 Release zips are named `NeededUtilities-<version>.zip` (see
 `scripts/package.sh`), so the filename always matches what's in the `.toc`.
 
+## Cutting a release
+
+1. Bump `## Version:` in `NeededUtilities/NeededUtilities.toc` and add an
+   entry to `CHANGELOG.md`. Commit and merge that to `main`.
+2. Tag the merge commit to match, prefixed with `v`, and push the tag:
+
+   ```
+   git tag v0.1.0
+   git push origin v0.1.0
+   ```
+
+3. The `Release` GitHub Actions workflow (`.github/workflows/release.yml`)
+   picks up the pushed tag, checks it matches the `.toc` version, builds the
+   zip via `scripts/package.sh`, and publishes it as a GitHub release. A tag
+   with a `-` in it (e.g. `v0.1.0-beta.1`) is published as a pre-release
+   automatically.
+
 ## Adding a new module
 
 Modules are self-contained files that register themselves with the
