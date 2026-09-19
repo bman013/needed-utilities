@@ -5,6 +5,24 @@ All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and version numbers follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.0-beta.2] - 2026-09-19
+
+### Added
+
+- **About panel**, listed above the Tooltip module page under "Needed
+  Utilities". Shows the addon name, version, description, and author, all
+  pulled from the `.toc` metadata rather than duplicated in Lua, plus
+  copyable links to the author's GitHub profile and the repo's issues page
+  for bug reports and feature requests.
+- `Config:AddSubheading`, `Config:AddText`, and `Config:AddCopyBox` helpers
+  in `Core/Config.lua` for any module that wants to show plain text or a
+  copyable link on its options page.
+
+### Changed
+
+- `## Author:` in the `.toc` now correctly credits
+  [bman013](https://github.com/bman013/).
+
 ## [0.1.0-beta.1] - 2026-09-19
 
 ### Added

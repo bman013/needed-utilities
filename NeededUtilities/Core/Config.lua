@@ -85,6 +85,50 @@ function Config:AddCheckbox(panel, label, tooltipText, get, set)
 	return checkbox
 end
 
+--- Adds a bold sub-heading line, stacking below the previous widget.
+function Config:AddSubheading(panel, text)
+	local fs = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+	fs:SetPoint("TOPLEFT", 16, panel.nextY)
+	fs:SetText(text)
+	panel.nextY = panel.nextY - 20
+	return fs
+end
+
+--- Adds a wrapping paragraph of plain text, stacking below the previous widget.
+function Config:AddText(panel, text)
+	local fs = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+	fs:SetPoint("TOPLEFT", 16, panel.nextY)
+	fs:SetPoint("RIGHT", -16, 0)
+	fs:SetJustifyH("LEFT")
+	fs:SetText(text)
+	panel.nextY = panel.nextY - fs:GetStringHeight() - 12
+	return fs
+end
+
+--- Adds a labelled, read-only, click-to-select text box - the standard WoW
+--- addon pattern for giving players a URL they can copy into a browser,
+--- since FontStrings can't be clicked as links.
+function Config:AddCopyBox(panel, label, value)
+	local labelFS = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+	labelFS:SetPoint("TOPLEFT", 16, panel.nextY)
+	labelFS:SetText(label)
+	panel.nextY = panel.nextY - 18
+
+	local box = CreateFrame("EditBox", nil, panel, "InputBoxTemplate")
+	box:SetSize(380, 20)
+	box:SetPoint("TOPLEFT", 20, panel.nextY)
+	box:SetAutoFocus(false)
+	box:SetText(value)
+	box:SetCursorPosition(0)
+	box:SetScript("OnEditFocusGained", function(self) self:HighlightText() end)
+	box:SetScript("OnEditFocusLost", function(self) self:HighlightText(0, 0) end)
+	box:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+	box:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
+
+	panel.nextY = panel.nextY - 30
+	return box
+end
+
 function Config:Open()
 	EnsureRoot()
 	if useModernSettings then
