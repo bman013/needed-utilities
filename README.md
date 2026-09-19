@@ -4,9 +4,9 @@ A modular utility framework for World of Warcraft: Classic Forever, built to
 make it easy to bolt on new small features (modules) over time without each
 one reinventing saved variables, an options panel, or slash commands.
 
-This is a beta release. Classic Forever is a new beta itself, so the
-`## Interface` line in the `.toc` may not match your client's build exactly —
-see [Installation](#installation) below if the addon doesn't load.
+Classic Forever is itself a new beta, so the `## Interface` line in the
+`.toc` may not match your client's build exactly — see
+[Installation](#installation) below if the addon doesn't load.
 
 ## Installation
 

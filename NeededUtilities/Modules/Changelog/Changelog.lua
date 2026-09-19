@@ -6,6 +6,15 @@ local NU = ns.NU
 -- without visiting GitHub. Newest first.
 local ENTRIES = {
 	{
+		version = "0.2.1",
+		date = "2026-09-19",
+		notes = {
+			"First non-beta release.",
+			"Changed: Tooltip defaults - anchor to mouse now on by default, show distance now off by default.",
+			"Changed: Bags now defaults to disabled. Existing saved settings are unaffected either way.",
+		},
+	},
+	{
 		version = "0.2.0-beta.3",
 		date = "2026-09-19",
 		notes = {

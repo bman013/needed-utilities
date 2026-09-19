@@ -5,12 +5,12 @@ local Tooltip = NU:RegisterModule("Tooltip", {})
 
 Tooltip.defaults = {
 	enabled = true,
-	anchorToMouse = false,
+	anchorToMouse = true,
 	showUnitID = true,
 	showSpellID = true,
 	showItemID = true,
 	classColorNames = true,
-	showDistance = true,
+	showDistance = false,
 }
 
 local CURSOR_OFFSET_X, CURSOR_OFFSET_Y = 12, -12

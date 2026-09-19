@@ -5,6 +5,20 @@ All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and version numbers follow [Semantic Versioning](https://semver.org/).
 
+## [0.2.1] - 2026-09-19
+
+First non-beta release.
+
+### Changed
+
+- **Tooltip** defaults: `anchorToMouse` now defaults **on**, `showDistance`
+  now defaults **off** (previously the other way around).
+- **Bags** now defaults to **disabled**, rather than enabled.
+
+These are default-only changes - anyone with existing saved settings keeps
+whatever they'd already chosen; this only affects what a fresh install (or
+any setting never explicitly set) starts with.
+
 ## [0.2.0-beta.3] - 2026-09-19
 
 ### Added

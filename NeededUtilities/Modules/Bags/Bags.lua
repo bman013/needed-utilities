@@ -7,7 +7,7 @@ BINDING_NAME_NEEDEDUTILITIES_TOGGLE_BAGSLOCK = "Toggle Bags Lock (Combined Bags)
 local Bags = NU:RegisterModule("Bags", {})
 
 Bags.defaults = {
-	enabled = true,
+	enabled = false,
 }
 
 local function db()
