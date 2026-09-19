@@ -70,24 +70,17 @@ checkbox — nothing is bundled together.
 ### Bags
 
 - **Bags unlocked (drag to move)** — a lock/unlock toggle for the combined
-  bags window. While unlocked, click and drag anywhere on the window to
-  reposition it — the whole window is a drag handle while unlocked, so it
-  won't respond to item clicks until you lock it again. Always resets to
-  locked on login, but the position you leave it at is saved and restored
-  automatically. Toggle it from the checkbox in Bags settings, or with a
-  keybinding — see [Keybindings](#keybindings). Applies to the combined
-  bags view specifically (not the older per-bag windows). Run `/nubags` if
-  it ever reports not working — it says whether the combined bags frame
-  was actually found and hooked.
-
-### Nameplates
-
-- **Highlight quest-objective mobs** — adds a light-red highlight (a thin
-  border plus a soft translucent wash) to the nameplate of any mob relevant
-  to one of your current quests, via `UnitIsQuestBoss`
-  (the same check Blizzard uses for the quest-skull icon above a mob's
-  head), so you can prioritise it at a glance. Re-checked whenever you
-  accept, complete, or abandon a quest.
+  bags window. While unlocked, click and drag its title bar to reposition
+  it — dragging only triggers from the title bar, not the whole window, so
+  items, the dropdown, and the close/portrait buttons keep working
+  normally regardless of lock state. Toggle it from the checkbox in Bags
+  settings, the lock button next to the window's own close button, or a
+  keybinding — see [Keybindings](#keybindings). Always resets to locked on
+  login; the position is saved the moment you lock it (and on every drag
+  release too), so it's wherever you left it next time you open your bags.
+  Applies to the combined bags view specifically (not the older per-bag
+  windows). Run `/nubags` if it ever reports not working — it says whether
+  the combined bags frame was actually found and hooked.
 
 ## Keybindings
 
@@ -219,8 +212,6 @@ NeededUtilities/            the addon itself (this folder is what gets zipped)
       Tooltip.lua
     Bags/
       Bags.lua
-    Nameplates/
-      Nameplates.lua
 scripts/
   package.sh                 builds dist/NeededUtilities-<version>.zip
 ```

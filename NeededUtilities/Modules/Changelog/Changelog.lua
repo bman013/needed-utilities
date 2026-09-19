@@ -6,6 +6,16 @@ local NU = ns.NU
 -- without visiting GitHub. Newest first.
 local ENTRIES = {
 	{
+		version = "0.2.0-beta.1",
+		date = "2026-09-19",
+		notes = {
+			"Removed: Nameplates module.",
+			"Changed: Bags dragging now only triggers from the title bar, not the whole window - fixes item clicks being blocked while unlocked.",
+			"Added: lock/unlock button next to the combined bags window's close button.",
+			"Changed: bag position is now also saved the moment you lock the window, not just on drag release.",
+		},
+	},
+	{
 		version = "0.1.0-beta.11",
 		date = "2026-09-19",
 		notes = {

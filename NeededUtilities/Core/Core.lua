@@ -76,6 +76,11 @@ function NU:MigrateDB()
 		db.modules.Backpacks = nil
 	end
 
+	if from < 3 and db.modules and db.modules.Nameplates then
+		-- The Nameplates module was removed.
+		db.modules.Nameplates = nil
+	end
+
 	db.schemaVersion = to
 end
 

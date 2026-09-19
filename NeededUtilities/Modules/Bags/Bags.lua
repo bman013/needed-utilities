@@ -15,7 +15,7 @@ local function db()
 end
 
 local combinedBagsFrame
-local dragOverlay
+local lockButton
 local unlockLabel
 local unlockCheckbox
 local locked = true -- always starts locked each session; only the saved position persists
@@ -41,19 +41,31 @@ local function RestorePosition(frame)
 	frame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", saved.x / scale, saved.y / scale)
 end
 
-local function ApplyLockState()
-	if dragOverlay then
-		-- The overlay only intercepts clicks while unlocked; locked, it's
-		-- fully click-through so bag/item interaction is untouched.
-		dragOverlay:EnableMouse(not locked)
+local function UpdateLockButton()
+	if not lockButton then return end
+	local settings = db()
+	lockButton:SetShown(settings and settings.enabled and true or false)
+	if locked then
+		lockButton.bg:SetColorTexture(0.3, 0.3, 0.3, 0.8)
+	else
+		lockButton.bg:SetColorTexture(1, 0.3, 0.3, 0.9)
 	end
+end
+
+local function ApplyLockState()
 	if unlockLabel then unlockLabel:SetShown(not locked) end
+	UpdateLockButton()
 end
 
 local function SetLocked(value)
 	locked = value
 	ApplyLockState()
 	if unlockCheckbox then unlockCheckbox:SetChecked(not locked) end
+	if value and combinedBagsFrame then
+		-- Belt-and-suspenders: also save on the moment it's locked, not
+		-- just on every drag release.
+		SavePosition(combinedBagsFrame)
+	end
 end
 
 --- Bound to the keybinding (Bindings.xml -> BINDING_NAME_NEEDEDUTILITIES_TOGGLE_BAGSLOCK).
@@ -61,7 +73,49 @@ function NeededUtilities_ToggleBagsLock()
 	local settings = db()
 	if not (settings and settings.enabled) then return end
 	SetLocked(not locked)
-	NU:Print(locked and "Bags locked." or "Bags unlocked - drag the combined bags window to move it.")
+	NU:Print(locked and "Bags locked." or "Bags unlocked - drag the title bar to move the window.")
+end
+
+local function CreateLockButton(frame)
+	local button = CreateFrame("Button", nil, frame)
+	button:SetSize(18, 18)
+	if frame.CloseButton then
+		button:SetPoint("RIGHT", frame.CloseButton, "LEFT", -2, 0)
+	else
+		button:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -32, -6)
+	end
+	button:SetFrameLevel(frame:GetFrameLevel() + 10)
+
+	local bg = button:CreateTexture(nil, "BACKGROUND")
+	bg:SetAllPoints()
+	button.bg = bg
+
+	local border = CreateFrame("Frame", nil, button, "BackdropTemplate")
+	border:SetAllPoints()
+	if border.SetBackdrop then
+		border:SetBackdrop({ edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", edgeSize = 8 })
+		border:SetBackdropBorderColor(0, 0, 0, 0.6)
+	end
+
+	button:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+		if locked then
+			GameTooltip:SetText("Bags locked", 1, 1, 1)
+			GameTooltip:AddLine("Click to unlock. While unlocked, drag the title bar to move the window.", nil, nil, nil, true)
+		else
+			GameTooltip:SetText("Bags unlocked", 1, 0.4, 0.4)
+			GameTooltip:AddLine("Drag the title bar to move the window. Click to lock it in place.", nil, nil, nil, true)
+		end
+		GameTooltip:Show()
+	end)
+	button:SetScript("OnLeave", function() GameTooltip:Hide() end)
+	button:SetScript("OnClick", function()
+		local settings = db()
+		if not (settings and settings.enabled) then return end
+		SetLocked(not locked)
+	end)
+
+	return button
 end
 
 local frameHooked = false
@@ -74,27 +128,21 @@ local function HookCombinedBags(frame)
 	frame:SetClampedToScreen(true)
 	RestorePosition(frame)
 
-	-- A dedicated frame layered ABOVE every one of the bag window's own
-	-- child widgets (item slots, the dropdown, the search box) so it always
-	-- wins hit-testing regardless of whether those widgets happen to cover
-	-- the whole window - hooking the container's own OnMouseDown isn't
-	-- reliable, since it only fires for clicks that land somewhere no child
-	-- widget has already claimed. This overlay is the whole window while
-	-- unlocked (it deliberately blocks item clicks too - you're moving the
-	-- window, not using it, until you lock it again) and fully inert while
-	-- locked.
-	dragOverlay = CreateFrame("Frame", nil, frame)
-	dragOverlay:SetAllPoints(frame)
-	dragOverlay:SetFrameStrata(frame:GetFrameStrata())
-	dragOverlay:SetFrameLevel(frame:GetFrameLevel() + 50)
-	dragOverlay:EnableMouse(false)
+	-- Drag only from the title bar (TitleContainer), not the whole window:
+	-- hooking a widget's own mouse handlers only fires for clicks that land
+	-- somewhere no child widget has already claimed, and the title bar
+	-- doesn't overlap the item-slot grid at all - so this can never
+	-- intercept an item click, unlike an overlay covering the whole window.
+	local dragZone = frame.TitleContainer or frame
+	dragZone:EnableMouse(true)
 
-	dragOverlay:SetScript("OnMouseDown", function(self, button)
-		if button == "LeftButton" then
+	dragZone:HookScript("OnMouseDown", function(self, button)
+		local settings = db()
+		if button == "LeftButton" and not locked and settings and settings.enabled then
 			frame:StartMoving()
 		end
 	end)
-	dragOverlay:SetScript("OnMouseUp", function(self)
+	dragZone:HookScript("OnMouseUp", function(self)
 		-- StopMovingOrSizing is safe to call even if nothing is currently
 		-- being moved (there's no IsMoving() method to guard it with).
 		frame:StopMovingOrSizing()
@@ -104,8 +152,10 @@ local function HookCombinedBags(frame)
 	unlockLabel = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
 	unlockLabel:SetPoint("BOTTOM", frame, "TOP", 0, 4)
 	unlockLabel:SetTextColor(1, 0.82, 0)
-	unlockLabel:SetText("Bags unlocked - drag anywhere on the window to move it")
+	unlockLabel:SetText("Bags unlocked - drag the title bar to move")
 	unlockLabel:Hide()
+
+	lockButton = CreateLockButton(frame)
 
 	ApplyLockState()
 end
@@ -149,7 +199,7 @@ local function BuildConfig()
 	NU.Config:AddModuleToggle(panel, "Bags")
 
 	unlockCheckbox = NU.Config:AddCheckbox(panel, "Bags unlocked (drag to move)",
-		"While checked, click and drag anywhere on the combined bags window to reposition it (it won't respond to item clicks while unlocked). Always resets to locked on login. You can also toggle this with a keybinding - see Game Menu > Key Bindings > AddOns > Needed Utilities.",
+		"While checked, click and drag the combined bags window's title bar to reposition it. There's also a lock button next to its close button that does the same thing. Always resets to locked on login, but the position is saved as soon as you lock it (or release a drag). You can also toggle this with a keybinding - see Game Menu > Key Bindings > AddOns > Needed Utilities.",
 		function() return not locked end,
 		function(value) SetLocked(not value) end)
 end

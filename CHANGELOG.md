@@ -5,6 +5,31 @@ All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and version numbers follow [Semantic Versioning](https://semver.org/).
 
+## [0.2.0-beta.1] - 2026-09-19
+
+### Removed
+
+- **Nameplates module**, entirely. A DB migration (schema v3) cleans up any
+  saved settings left over from it.
+
+### Changed
+
+- **Bags**: reworked how the combined bags window is moved, again. Dragging
+  now only triggers from the window's title bar (`TitleContainer`), not the
+  whole window - the previous whole-window overlay reliably captured drag
+  clicks, but it also blocked clicks on items while unlocked, which broke
+  normal bag use. Hooking the title bar's own mouse handlers naturally
+  excludes item slots (and the close/portrait buttons) by the same
+  child-widget-gets-first-claim principle the earlier full-window approach
+  was trying to route around - clicks on items simply never reach it.
+- **Bags**: added a lock/unlock button next to the combined bags window's
+  close button, as an additional (more discoverable) way to toggle the same
+  lock state as the options-panel checkbox and the keybinding - all three
+  stay in sync.
+- **Bags**: position is now explicitly saved the moment you lock the
+  window, in addition to on every drag release, so it's definitely wherever
+  you left it next time you open your bags.
+
 ## [0.1.0-beta.11] - 2026-09-19
 
 ### Fixed
