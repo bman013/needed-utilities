@@ -12,8 +12,9 @@ local function db()
 	return NU:GetModuleDB("Nameplates")
 end
 
-local BORDER_COLOR = { 1, 0.82, 0 } -- gold, matches the game's own quest-yellow convention
+local MARKER_COLOR = { 1, 0.3, 0.35 } -- light red, a "prioritise this" highlight
 local BORDER_THICKNESS = 2
+local FILL_ALPHA = 0.2 -- soft translucent wash so it reads as a highlight marker, not just a thin outline
 
 local function GetPlateAnchor(namePlateFrame)
 	return namePlateFrame.UnitFrame or namePlateFrame
@@ -26,9 +27,13 @@ local function CreateBorder(anchor)
 	border:SetAllPoints(anchor)
 	border:SetFrameLevel(anchor:GetFrameLevel() + 5)
 
+	local fill = border:CreateTexture(nil, "ARTWORK")
+	fill:SetAllPoints(border)
+	fill:SetColorTexture(MARKER_COLOR[1], MARKER_COLOR[2], MARKER_COLOR[3], FILL_ALPHA)
+
 	local function Line()
 		local tex = border:CreateTexture(nil, "OVERLAY")
-		tex:SetColorTexture(BORDER_COLOR[1], BORDER_COLOR[2], BORDER_COLOR[3], 1)
+		tex:SetColorTexture(MARKER_COLOR[1], MARKER_COLOR[2], MARKER_COLOR[3], 1)
 		return tex
 	end
 
@@ -118,7 +123,7 @@ local function BuildConfig()
 	local panel = NU.Config:RegisterModulePanel("Nameplates", "Nameplates", true)
 	NU.Config:AddModuleToggle(panel, "Nameplates")
 
-	NU.Config:AddCheckbox(panel, "Highlight quest-objective mobs", "Adds a gold border to the nameplate of any mob relevant to one of your current quests, so you can prioritise it at a glance.",
+	NU.Config:AddCheckbox(panel, "Highlight quest-objective mobs", "Adds a light-red highlight to the nameplate of any mob relevant to one of your current quests, so you can prioritise it at a glance.",
 		function() return db().highlightQuestMobs end,
 		function(value)
 			db().highlightQuestMobs = value

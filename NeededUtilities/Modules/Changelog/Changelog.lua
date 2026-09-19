@@ -6,6 +6,14 @@ local NU = ns.NU
 -- without visiting GitHub. Newest first.
 local ENTRIES = {
 	{
+		version = "0.1.0-beta.11",
+		date = "2026-09-19",
+		notes = {
+			"Fixed: Tooltip's mouse-anchor flashed too-wide then snapped back to size on a new target - was anchoring on SetOwner (before content is sized), now anchors only via OnUpdate.",
+			"Changed: Nameplates quest highlight is now a light-red marker (border plus soft wash) instead of a solid gold border.",
+		},
+	},
+	{
 		version = "0.1.0-beta.10",
 		date = "2026-09-19",
 		notes = {

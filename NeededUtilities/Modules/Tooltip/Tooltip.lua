@@ -165,8 +165,15 @@ local function HookTooltips()
 	-- Blizzard doesn't allow unhooking, so the mouse-anchor hook stays
 	-- attached for the life of the session; AnchorToMouse() itself checks
 	-- the enabled/anchorToMouse settings every call and no-ops otherwise.
+	--
+	-- Deliberately OnUpdate only, not also on SetOwner: SetOwner fires
+	-- before the tooltip's content (including our own added lines) has
+	-- been sized, so anchoring there could pin the left edge against a
+	-- stale/wider width for a frame, producing a visible "renders wide,
+	-- then snaps to the right size" flash as the real content settles.
+	-- OnUpdate re-anchors every frame the tooltip is shown, so it's never
+	-- more than a frame behind the tooltip's actual current size.
 	GameTooltip:HookScript("OnUpdate", AnchorToMouse)
-	hooksecurefunc(GameTooltip, "SetOwner", AnchorToMouse)
 end
 
 local configBuilt = false

@@ -82,8 +82,9 @@ checkbox — nothing is bundled together.
 
 ### Nameplates
 
-- **Highlight quest-objective mobs** — adds a gold border to the nameplate
-  of any mob relevant to one of your current quests, via `UnitIsQuestBoss`
+- **Highlight quest-objective mobs** — adds a light-red highlight (a thin
+  border plus a soft translucent wash) to the nameplate of any mob relevant
+  to one of your current quests, via `UnitIsQuestBoss`
   (the same check Blizzard uses for the quest-skull icon above a mob's
   head), so you can prioritise it at a glance. Re-checked whenever you
   accept, complete, or abandon a quest.

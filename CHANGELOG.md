@@ -5,6 +5,26 @@ All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and version numbers follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.0-beta.11] - 2026-09-19
+
+### Fixed
+
+- **Tooltip**: fixed a visible "renders too wide, then snaps back to the
+  right size" flash every time the tooltip first appeared on a new target
+  with mouse-anchoring enabled. The mouse-anchor hook was also firing on
+  `SetOwner`, which runs before the tooltip's content (including our own
+  added lines) is sized - anchoring by a pinned left edge against that
+  stale/wider size, then shrinking once real content settled, produced the
+  flash. Anchoring now happens only via the per-frame `OnUpdate` hook,
+  which is never more than a frame behind the tooltip's actual size.
+
+### Changed
+
+- **Nameplates**: "Highlight quest-objective mobs" now marks the nameplate
+  with a light-red highlight (a thin border plus a soft translucent wash)
+  instead of a solid gold border, to read more as a "prioritise this"
+  marker than a hard outline.
+
 ## [0.1.0-beta.10] - 2026-09-19
 
 ### Fixed
