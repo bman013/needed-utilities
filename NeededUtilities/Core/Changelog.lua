@@ -6,6 +6,13 @@ local NU = ns.NU
 -- without visiting GitHub. Newest first.
 local ENTRIES = {
 	{
+		version = "0.1.0-beta.6",
+		date = "2026-09-19",
+		notes = {
+			"Fixed: checkboxes could show unchecked on first opening a category even though the setting was still on, most reliably seen right after replacing the addon folder and /reload. Widgets now set correct state immediately and re-sync whenever their panel is shown.",
+		},
+	},
+	{
 		version = "0.1.0-beta.5",
 		date = "2026-09-19",
 		notes = {

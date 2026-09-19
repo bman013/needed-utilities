@@ -5,6 +5,20 @@ All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and version numbers follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.0-beta.6] - 2026-09-19
+
+### Fixed
+
+- Checkboxes across every options panel (Tooltip, Backpacks) could show
+  unchecked on first opening a category even though the underlying setting
+  was still on and working - most reliably seen right after replacing the
+  addon folder and `/reload`ing. The checkbox state was only synced on its
+  own `OnShow`, which doesn't reliably fire for a widget created while its
+  parent panel happens to already be the visible/selected category (e.g.
+  one the game remembered as last-viewed across the reload). Checkboxes now
+  set their correct state immediately on creation, and every widget on a
+  panel is also re-synced whenever that panel itself is shown.
+
 ## [0.1.0-beta.5] - 2026-09-19
 
 ### Added

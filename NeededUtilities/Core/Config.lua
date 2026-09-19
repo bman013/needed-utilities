@@ -14,6 +14,18 @@ local function CreatePanel(displayName)
 	local panel = CreateFrame("Frame")
 	panel.name = displayName
 	panel.nextY = -16
+	panel.refreshers = {}
+	-- Belt-and-suspenders: re-sync every widget on this panel whenever the
+	-- panel itself is shown (e.g. switching to it in the category list),
+	-- rather than trusting each individual widget's own OnShow to fire -
+	-- a freshly created widget whose parent panel happened to already be
+	-- the selected/visible category (e.g. remembered from before a
+	-- /reload) never gets a real hidden->shown transition of its own.
+	panel:SetScript("OnShow", function(self)
+		for _, refresh in ipairs(self.refreshers) do
+			refresh()
+		end
+	end)
 	return panel
 end
 
@@ -78,9 +90,13 @@ function Config:AddCheckbox(panel, label, tooltipText, get, set)
 	checkbox:SetScript("OnClick", function(self)
 		set(self:GetChecked() and true or false)
 	end)
-	checkbox:SetScript("OnShow", function(self)
-		self:SetChecked(get() and true or false)
-	end)
+
+	local function Refresh()
+		checkbox:SetChecked(get() and true or false)
+	end
+	Refresh() -- correct immediately; don't rely solely on OnShow firing
+	table.insert(panel.refreshers, Refresh)
+
 	panel.nextY = panel.nextY - 28
 	return checkbox
 end
