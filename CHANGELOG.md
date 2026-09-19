@@ -5,6 +5,18 @@ All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and version numbers follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.0-beta.4] - 2026-09-19
+
+### Fixed
+
+- **Tooltip**: fixed a "attempt to call a nil value" error hovering an
+  equippable item that has something equipped in the same slot (e.g. in
+  bags/vendor windows). Blizzard's shopping/comparison tooltip
+  (`ShoppingTooltip1`/`2`) is routed through the same tooltip data callback
+  as the main tooltip but doesn't implement `GetItem()`/`GetSpell()`/
+  `GetUnit()`; `OnTooltipSetItem`, `OnTooltipSetSpell`, and `OnTooltipSetUnit`
+  now check the method exists before calling it.
+
 ## [0.1.0-beta.3] - 2026-09-19
 
 ### Added

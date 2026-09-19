@@ -103,6 +103,7 @@ end
 local function OnTooltipSetUnit(tooltip)
 	local settings = db()
 	if not (settings and settings.enabled) then return end
+	if not tooltip.GetUnit then return end
 
 	local _, unit = tooltip:GetUnit()
 	if not unit then return end
@@ -115,6 +116,7 @@ end
 local function OnTooltipSetSpell(tooltip)
 	local settings = db()
 	if not (settings and settings.enabled and settings.showSpellID) then return end
+	if not tooltip.GetSpell then return end
 
 	local _, spellID = tooltip:GetSpell()
 	if not spellID then return end
@@ -126,6 +128,10 @@ end
 local function OnTooltipSetItem(tooltip)
 	local settings = db()
 	if not (settings and settings.enabled and settings.showItemID) then return end
+	-- The shopping/comparison tooltip Blizzard shows next to an equippable
+	-- item (e.g. one you already have something equipped in that slot for)
+	-- goes through this same callback but doesn't implement GetItem().
+	if not tooltip.GetItem then return end
 
 	local _, link = tooltip:GetItem()
 	local itemID = link and tonumber(link:match("item:(%d+)"))
