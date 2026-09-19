@@ -85,7 +85,13 @@ function NU:MigrateDB()
 end
 
 function NU:InitializeDB()
-	if type(NeededUtilitiesDB) ~= "table" then
+	-- Distinguishes two very different failure modes if settings ever
+	-- appear reset: the saved file not being found/read at all (this is
+	-- true) versus being read but its content never actually updating
+	-- (this is false, but values still look wrong) - see loadedFromDisk
+	-- used in OnPlayerLogin below.
+	self.loadedFromDisk = type(NeededUtilitiesDB) == "table"
+	if not self.loadedFromDisk then
 		NeededUtilitiesDB = {}
 	end
 	self.db = NeededUtilitiesDB
@@ -148,6 +154,7 @@ function NU:OnPlayerLogin()
 	if Version.isPrerelease then
 		self:Print("This is a beta build - please report issues on GitHub.")
 	end
+	self:Print(self.loadedFromDisk and "Loaded existing saved settings." or "No saved settings found - starting fresh.")
 end
 
 NU:RegisterEvent("ADDON_LOADED")

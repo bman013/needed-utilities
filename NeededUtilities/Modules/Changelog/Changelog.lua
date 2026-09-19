@@ -6,6 +6,13 @@ local NU = ns.NU
 -- without visiting GitHub. Newest first.
 local ENTRIES = {
 	{
+		version = "0.2.0-beta.3",
+		date = "2026-09-19",
+		notes = {
+			"Added: login now prints whether saved settings were found or not, to help track down a reported settings-reset-on-reload issue.",
+		},
+	},
+	{
 		version = "0.2.0-beta.2",
 		date = "2026-09-19",
 		notes = {

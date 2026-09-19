@@ -2,7 +2,7 @@
 ## Title: Needed Utilities
 ## Notes: Modular utility framework for WoW Classic Forever. Ships with Tooltip and Bags modules.
 ## Author: bman013
-## Version: 0.2.0-beta.2
+## Version: 0.2.0-beta.3
 ## SavedVariables: NeededUtilitiesDB
 ## X-Website: https://github.com/bman013/needed-utilities
 ## X-Author-URL: https://github.com/bman013/

@@ -5,6 +5,19 @@ All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and version numbers follow [Semantic Versioning](https://semver.org/).
 
+## [0.2.0-beta.3] - 2026-09-19
+
+### Added
+
+- Login now prints "Loaded existing saved settings" or "No saved settings
+  found - starting fresh", to help track down a report of Tooltip settings
+  reverting to defaults after a plain `/reload` (no addon-folder swap
+  involved - `/nu dump` confirmed the in-memory values were correct right
+  before reloading). This distinguishes the file not being found/read at
+  all from being read but its content never actually updating - two very
+  different causes, both in WoW's own save/load cycle rather than in this
+  addon's Lua code, which `/nu dump` had already ruled out as the source.
+
 ## [0.2.0-beta.2] - 2026-09-19
 
 ### Added
