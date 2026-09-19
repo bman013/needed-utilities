@@ -15,6 +15,7 @@ local function CreatePanel(displayName)
 	panel.name = displayName
 	panel.nextY = -16
 	panel.refreshers = {}
+	panel.dependentWidgets = {}
 	-- Belt-and-suspenders: re-sync every widget on this panel whenever the
 	-- panel itself is shown (e.g. switching to it in the category list),
 	-- rather than trusting each individual widget's own OnShow to fire -
@@ -63,6 +64,7 @@ function Config:RegisterModulePanel(moduleKey, displayName)
 
 	local root = EnsureRoot()
 	local panel = CreatePanel(displayName)
+	panel.moduleKey = moduleKey
 
 	local title = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 	title:SetPoint("TOPLEFT", 16, -16)
@@ -81,8 +83,10 @@ function Config:RegisterModulePanel(moduleKey, displayName)
 end
 
 --- Adds a checkbox bound to get()/set(value) getter/setter functions,
---- stacking it below the previous widget added to this panel.
-function Config:AddCheckbox(panel, label, tooltipText, get, set)
+--- stacking it below the previous widget added to this panel. Unless this
+--- is the panel's own module-enable toggle (isMasterToggle), it's greyed
+--- out and disabled whenever the panel's module itself is off.
+function Config:AddCheckbox(panel, label, tooltipText, get, set, isMasterToggle)
 	local checkbox = CreateFrame("CheckButton", nil, panel, "InterfaceOptionsCheckButtonTemplate")
 	checkbox:SetPoint("TOPLEFT", 16, panel.nextY)
 	checkbox.Text:SetText(label)
@@ -97,8 +101,37 @@ function Config:AddCheckbox(panel, label, tooltipText, get, set)
 	Refresh() -- correct immediately; don't rely solely on OnShow firing
 	table.insert(panel.refreshers, Refresh)
 
+	if panel.moduleKey and not isMasterToggle then
+		local function RefreshEnabled()
+			local moduleDB = NU:GetModuleDB(panel.moduleKey)
+			local moduleEnabled = moduleDB and moduleDB.enabled
+			checkbox:SetEnabled(moduleEnabled and true or false)
+			checkbox.Text:SetFontObject(moduleEnabled and "GameFontHighlight" or "GameFontDisable")
+		end
+		RefreshEnabled()
+		table.insert(panel.refreshers, RefreshEnabled)
+		table.insert(panel.dependentWidgets, RefreshEnabled)
+	end
+
 	panel.nextY = panel.nextY - 28
 	return checkbox
+end
+
+--- Adds the standard master "Enable X module" checkbox for a module panel.
+--- Every other AddCheckbox added to this panel is automatically greyed out
+--- and disabled while the module itself is off, and re-enabled immediately
+--- (not just next time the panel is shown) when this is switched back on.
+function Config:AddModuleToggle(panel, displayName)
+	local moduleKey = panel.moduleKey
+	return self:AddCheckbox(panel, ("Enable %s module"):format(displayName), "Master switch for everything below.",
+		function() return NU:GetModuleDB(moduleKey).enabled end,
+		function(value)
+			NU:SetModuleEnabled(moduleKey, value)
+			for _, refreshEnabled in ipairs(panel.dependentWidgets) do
+				refreshEnabled()
+			end
+		end,
+		true)
 end
 
 --- Adds a bold sub-heading line, stacking below the previous widget.

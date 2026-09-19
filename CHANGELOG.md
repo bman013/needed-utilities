@@ -5,6 +5,36 @@ All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and version numbers follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.0-beta.7] - 2026-09-19
+
+### Added
+
+- **Nameplates module**: "Highlight quest-objective mobs" setting. Adds a
+  gold border to the nameplate of any mob relevant to one of your current
+  quests (via `UnitIsQuestBoss`, the same check Blizzard uses for the
+  quest-skull icon), so you can prioritise it at a glance.
+- Keybinding support (`Bindings.xml`): a "Toggle Bags Lock (Combined Bags)"
+  action, unbound by default - set it under Key Bindings > AddOns > Needed
+  Utilities.
+
+### Changed
+
+- **Renamed the Backpacks module to Bags.** A DB migration (schema v2)
+  carries over its saved settings and window position automatically.
+- **Reworked how the combined bags window is moved.** The previous
+  Shift+drag-the-header approach depended on locating a specific label at
+  runtime and click-propagation to avoid breaking the dropdown underneath -
+  too many failure points, and it wasn't reliable in testing. Replaced with
+  a lock/unlock toggle (checkbox in Bags settings, or the new keybinding):
+  while unlocked, drag anywhere on the window's background to move it; item
+  slots and the dropdown are separate child widgets and keep working
+  normally either way. Always resets to locked on login.
+- **Every module's settings now grey out and disable while that module's
+  own "Enable" switch is off**, instead of staying clickable but inert.
+- About and Changelog moved from `Core/` to `Modules/`, alongside every
+  other panel - `Core/` is now just the framework internals (Version,
+  Core, Config).
+
 ## [0.1.0-beta.6] - 2026-09-19
 
 ### Fixed

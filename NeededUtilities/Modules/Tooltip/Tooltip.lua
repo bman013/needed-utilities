@@ -175,10 +175,7 @@ local function BuildConfig()
 	configBuilt = true
 
 	local panel = NU.Config:RegisterModulePanel("Tooltip", "Tooltip")
-
-	NU.Config:AddCheckbox(panel, "Enable Tooltip module", "Master switch for all tooltip enhancements below.",
-		function() return db().enabled end,
-		function(value) NU:SetModuleEnabled("Tooltip", value) end)
+	NU.Config:AddModuleToggle(panel, "Tooltip")
 
 	NU.Config:AddCheckbox(panel, "Anchor tooltip to mouse", "Keeps the tooltip attached to the cursor instead of its default screen position.",
 		function() return db().anchorToMouse end,

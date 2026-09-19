@@ -18,7 +18,7 @@ Version.full = GetAddonMetadata("Version") or "0.0.0"
 -- Bump this whenever the shape of NeededUtilitiesDB changes, and add the
 -- corresponding step to NU:MigrateDB() in Core.lua so old saved variables
 -- get carried forward instead of reset.
-Version.dbSchema = 1
+Version.dbSchema = 2
 
 local major, minor, patch, prerelease = Version.full:match("^(%d+)%.(%d+)%.(%d+)%-?(.-)$")
 Version.major = tonumber(major) or 0

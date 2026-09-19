@@ -1,0 +1,5 @@
+<Bindings>
+	<Binding name="NEEDEDUTILITIES_TOGGLE_BAGSLOCK" header="BINDING_HEADER_NEEDEDUTILITIES">
+		NeededUtilities_ToggleBagsLock()
+	</Binding>
+</Bindings>

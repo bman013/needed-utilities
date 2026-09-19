@@ -8,6 +8,11 @@ NU.name = ADDON_NAME
 NU.modules = {}
 NU.moduleOrder = {}
 
+-- Shared keybinding section header, shown in Game Menu > Key Bindings >
+-- AddOns. Individual bindings (BINDING_NAME_...) are declared next to the
+-- feature they belong to, e.g. Modules/Bags/Bags.lua.
+BINDING_HEADER_NEEDEDUTILITIES = "Needed Utilities"
+
 local Version = ns.Version
 local PREFIX = "|cff3fa0ffNeeded Utilities|r"
 
@@ -58,8 +63,18 @@ function NU:MigrateDB()
 	local from = db.schemaVersion or 0
 	local to = Version.dbSchema
 
-	-- Add migration steps here as the schema evolves, e.g.:
-	-- if from < 2 then db.modules.Tooltip.someRenamedField = db.modules.Tooltip.oldField end
+	if from < 2 and db.modules and db.modules.Backpacks then
+		-- The Backpacks module was renamed to Bags.
+		db.modules.Bags = db.modules.Bags or {}
+		local old = db.modules.Backpacks
+		if old.combinedBagsPosition and not db.modules.Bags.combinedBagsPosition then
+			db.modules.Bags.combinedBagsPosition = old.combinedBagsPosition
+		end
+		if old.enabled ~= nil and db.modules.Bags.enabled == nil then
+			db.modules.Bags.enabled = old.enabled
+		end
+		db.modules.Backpacks = nil
+	end
 
 	db.schemaVersion = to
 end

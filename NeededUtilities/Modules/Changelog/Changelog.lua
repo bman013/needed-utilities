@@ -6,6 +6,17 @@ local NU = ns.NU
 -- without visiting GitHub. Newest first.
 local ENTRIES = {
 	{
+		version = "0.1.0-beta.7",
+		date = "2026-09-19",
+		notes = {
+			"Added: Nameplates module - highlights the nameplate of any mob relevant to one of your current quests with a gold border, so you can prioritise it at a glance.",
+			"Changed: Backpacks module renamed to Bags. Existing settings and saved window position carry over automatically.",
+			"Changed: moving the combined bags window is now a lock/unlock toggle (checkbox, or a keybinding you can set under Key Bindings > AddOns > Needed Utilities) instead of Shift+drag on the header - more reliable, and drag works anywhere on the window's background while unlocked.",
+			"Changed: every module's settings are now greyed out and disabled while that module's own \"Enable\" switch is off.",
+			"Changed: About and Changelog moved under Modules/, alongside every other panel.",
+		},
+	},
+	{
 		version = "0.1.0-beta.6",
 		date = "2026-09-19",
 		notes = {

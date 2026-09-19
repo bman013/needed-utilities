@@ -37,6 +37,11 @@ and either add that number to the `## Interface:` line, or enable
 | `/nu enable <module>` | Enable a module (e.g. `/nu enable Tooltip`) |
 | `/nu disable <module>` | Disable a module |
 
+Every module's settings page starts with an "Enable X module" switch. While
+it's off, every other setting on that page is greyed out and disabled
+(rather than staying clickable but inert) - the switch itself always stays
+clickable so you can turn the module back on.
+
 ## Modules
 
 ### Tooltip
@@ -62,16 +67,37 @@ Adds a set of independently toggleable tooltip enhancements, all available in
 Each of these, plus a module-level enable/disable switch, is its own
 checkbox — nothing is bundled together.
 
-### Backpacks
+### Bags
 
-- **Allow moving the combined bags window** — hold Shift and drag the
-  "Combined Backpack" header (the row with the dropdown, at the top of the
-  combined bags window) to reposition it; a plain click still opens the
-  dropdown as normal. The drag handle deliberately only covers that header
-  row, not the whole bag frame — Shift+click on an item slot already links
-  it in chat, and this must not interfere with that. Position is saved and
-  restored automatically. Applies to the combined bags view specifically
-  (not the older per-bag windows).
+- **Bags unlocked (drag to move)** — a lock/unlock toggle for the combined
+  bags window. While unlocked, click and drag anywhere on the window's
+  background (not on an item) to reposition it; item slots and the bag-view
+  dropdown are separate widgets and keep working normally either way.
+  Always resets to locked on login, but the position you leave it at is
+  saved and restored automatically. Toggle it from the checkbox in Bags
+  settings, or with a keybinding — see [Keybindings](#keybindings). Applies
+  to the combined bags view specifically (not the older per-bag windows).
+
+### Nameplates
+
+- **Highlight quest-objective mobs** — adds a gold border to the nameplate
+  of any mob relevant to one of your current quests, via `UnitIsQuestBoss`
+  (the same check Blizzard uses for the quest-skull icon above a mob's
+  head), so you can prioritise it at a glance. Re-checked whenever you
+  accept, complete, or abandon a quest.
+
+## Keybindings
+
+`/nu config` isn't the only way to reach every setting — some are also
+reachable via a keybinding, listed under Game Menu (Esc) > Key Bindings >
+AddOns > Needed Utilities:
+
+| Action | Default | Does |
+| --- | --- | --- |
+| Toggle Bags Lock (Combined Bags) | Unbound | Same as the "Bags unlocked" checkbox in Bags settings — lets you move the combined bags window without opening the options panel. |
+
+Bindings ship unbound by default so nothing collides with your existing
+keybinds; set one in the Key Bindings menu.
 
 ## About and Changelog panels
 
@@ -153,9 +179,20 @@ Then:
 
 1. Put the file under `NeededUtilities/Modules/<MyModule>/`.
 2. Add it to the load order at the bottom of `NeededUtilities.toc`.
-3. Optionally call `NU.Config:RegisterModulePanel(...)` and
-   `NU.Config:AddCheckbox(...)` from `OnEnable` to add an options page —
-   see `Modules/Tooltip/Tooltip.lua` for a full example.
+3. Optionally add an options page from `OnEnable`:
+
+   ```lua
+   local panel = NU.Config:RegisterModulePanel("MyModule", "My Module")
+   NU.Config:AddModuleToggle(panel, "My Module") -- the "Enable" switch
+
+   NU.Config:AddCheckbox(panel, "Some setting", "What it does.",
+       function() return NU:GetModuleDB("MyModule").someSetting end,
+       function(value) NU:GetModuleDB("MyModule").someSetting = value end)
+   ```
+
+   Every checkbox added after `AddModuleToggle` is automatically greyed out
+   and disabled while the module itself is off — see
+   `Modules/Tooltip/Tooltip.lua` or `Modules/Bags/Bags.lua` for full examples.
 
 The core framework handles saved-variable defaults, migration, enabling on
 login, and the `/nu enable|disable` commands for you.
@@ -165,17 +202,22 @@ login, and the `/nu enable|disable` commands for you.
 ```
 NeededUtilities/            the addon itself (this folder is what gets zipped)
   NeededUtilities.toc
-  Core/
+  Bindings.xml               keybinding declarations (auto-detected by name, not listed in the .toc)
+  Core/                      framework internals only - not feature panels
     Version.lua              version parsing, single source of truth
     Core.lua                 module registry, SavedVariables, slash commands
-    Config.lua                shared options-panel helper
-    About.lua                About page (addon info pulled from the .toc)
-    Changelog.lua            in-game Changelog page (kept in sync with CHANGELOG.md by hand)
-  Modules/
+    Config.lua               shared options-panel helper
+  Modules/                   every panel lives here, framework or feature alike
+    About/
+      About.lua              About page (addon info pulled from the .toc)
+    Changelog/
+      Changelog.lua          in-game Changelog page (kept in sync with CHANGELOG.md by hand)
     Tooltip/
       Tooltip.lua
-    Backpacks/
-      Backpacks.lua
+    Bags/
+      Bags.lua
+    Nameplates/
+      Nameplates.lua
 scripts/
   package.sh                 builds dist/NeededUtilities-<version>.zip
 ```
