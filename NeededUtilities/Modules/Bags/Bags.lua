@@ -95,10 +95,10 @@ local function HookCombinedBags(frame)
 		end
 	end)
 	dragOverlay:SetScript("OnMouseUp", function(self)
-		if frame:IsMoving() then
-			frame:StopMovingOrSizing()
-			SavePosition(frame)
-		end
+		-- StopMovingOrSizing is safe to call even if nothing is currently
+		-- being moved (there's no IsMoving() method to guard it with).
+		frame:StopMovingOrSizing()
+		SavePosition(frame)
 	end)
 
 	unlockLabel = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")

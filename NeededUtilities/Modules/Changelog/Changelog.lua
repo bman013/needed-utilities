@@ -6,6 +6,13 @@ local NU = ns.NU
 -- without visiting GitHub. Newest first.
 local ENTRIES = {
 	{
+		version = "0.1.0-beta.10",
+		date = "2026-09-19",
+		notes = {
+			"Fixed: releasing a bag drag threw a Lua error on a non-existent frame:IsMoving() method. Dragging itself was already working; this only affected the mouse-up handler.",
+		},
+	},
+	{
 		version = "0.1.0-beta.9",
 		date = "2026-09-19",
 		notes = {

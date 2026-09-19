@@ -5,6 +5,19 @@ All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and version numbers follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.0-beta.10] - 2026-09-19
+
+### Fixed
+
+- **Bags**: releasing a drag threw "attempt to call a nil value" on
+  `frame:IsMoving()`. `IsMoving()` isn't an actual Frame method - it was
+  confused with `IsMovable` (a different check, for whether movement is
+  enabled at all). `StopMovingOrSizing()` is safe to call unconditionally
+  regardless of whether a move is in progress, so the guard is removed
+  rather than replaced. Dragging itself was already working correctly by
+  this point (beta.9's frame-lookup and overlay fix); this only affected
+  what happened on mouse-up.
+
 ## [0.1.0-beta.9] - 2026-09-19
 
 ### Fixed
