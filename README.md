@@ -52,6 +52,12 @@ Adds a set of independently toggleable tooltip enhancements, all available in
 - **Show item ID** — adds the item ID to item tooltips.
 - **Class-colour player names** — colours a player's name in the tooltip by
   their class.
+- **Show distance to unit** — adds an approximate distance band (`< 10 yd`,
+  `10-11 yd`, `11-28 yd`, or `28+ yd`) to the moused-over unit. Blizzard
+  removed addons' access to exact unit distances years ago (an anti-cheat
+  measure that applies to Classic too), so this uses `CheckInteractDistance`
+  against its fixed duel/trade/inspect range thresholds — the same technique
+  other range-display addons use. It's a band, not a precise number.
 
 Each of these, plus a module-level enable/disable switch, is its own
 checkbox — nothing is bundled together.
@@ -72,6 +78,18 @@ existing users' settings get migrated forward instead of reset.
 
 Release zips are named `NeededUtilities-<version>.zip` (see
 `scripts/package.sh`), so the filename always matches what's in the `.toc`.
+
+## FAQ
+
+**If I delete and re-copy the `NeededUtilities` addon folder, do I lose my
+settings?** No. Settings live in
+`WTF/Account/<account>/SavedVariables/NeededUtilities.lua`, not in
+`Interface/AddOns/NeededUtilities/` — they're entirely separate from the
+addon's code. On login, `NU:InitializeDB()` loads whatever's already saved
+there and layers in defaults for any settings that don't exist yet (e.g.
+after updating to a version with a new checkbox), without touching values
+you've already set. You'd only lose settings if you also delete your `WTF`
+folder or reset your UI.
 
 ## Cutting a release
 
@@ -132,6 +150,7 @@ NeededUtilities/            the addon itself (this folder is what gets zipped)
     Version.lua              version parsing, single source of truth
     Core.lua                 module registry, SavedVariables, slash commands
     Config.lua                shared options-panel helper
+    About.lua                About page (addon info pulled from the .toc)
   Modules/
     Tooltip/
       Tooltip.lua

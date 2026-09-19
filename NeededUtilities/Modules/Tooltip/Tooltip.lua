@@ -10,6 +10,7 @@ Tooltip.defaults = {
 	showSpellID = true,
 	showItemID = true,
 	classColorNames = true,
+	showDistance = true,
 }
 
 local CURSOR_OFFSET_X, CURSOR_OFFSET_Y = 12, -12
@@ -71,6 +72,34 @@ local function AddUnitIDLine(tooltip, unit)
 	tooltip:Show()
 end
 
+-- Blizzard stopped exposing exact unit distances to addons years ago (an
+-- anti-cheat measure that applies to Classic too), so the closest we can
+-- get is bucketing against the fixed ranges CheckInteractDistance still
+-- exposes: duel (~9.9yd), trade (~11.11yd), and inspect (~28yd).
+local function GetApproxDistance(unit)
+	if not CheckInteractDistance then return nil end
+	if CheckInteractDistance(unit, 3) then
+		return "< 10 yd"
+	elseif CheckInteractDistance(unit, 2) then
+		return "10-11 yd"
+	elseif CheckInteractDistance(unit, 1) then
+		return "11-28 yd"
+	else
+		return "28+ yd"
+	end
+end
+
+local function AddDistanceLine(tooltip, unit)
+	local settings = db()
+	if not (settings and settings.enabled and settings.showDistance) then return end
+
+	local distance = GetApproxDistance(unit)
+	if not distance then return end
+
+	tooltip:AddLine(("%sDistance: %s|r"):format(INFO_COLOR, distance), 1, 1, 1)
+	tooltip:Show()
+end
+
 local function OnTooltipSetUnit(tooltip)
 	local settings = db()
 	if not (settings and settings.enabled) then return end
@@ -80,6 +109,7 @@ local function OnTooltipSetUnit(tooltip)
 
 	ColorUnitName(tooltip, unit)
 	AddUnitIDLine(tooltip, unit)
+	AddDistanceLine(tooltip, unit)
 end
 
 local function OnTooltipSetSpell(tooltip)
@@ -163,6 +193,10 @@ local function BuildConfig()
 	NU.Config:AddCheckbox(panel, "Class-colour player names", "Colours a player's name in the tooltip by their class.",
 		function() return db().classColorNames end,
 		function(value) db().classColorNames = value end)
+
+	NU.Config:AddCheckbox(panel, "Show distance to unit", "Adds an approximate distance in yards to the moused-over unit. Blizzard doesn't let addons read exact distances, so this shows a range band (< 10, 10-11, 11-28, or 28+ yards) instead of a precise number.",
+		function() return db().showDistance end,
+		function(value) db().showDistance = value end)
 end
 
 function Tooltip:OnEnable()
