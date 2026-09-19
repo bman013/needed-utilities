@@ -1,0 +1,12 @@
+## Interface: 11507, 20504, 30403, 40402, 50500
+## Title: Needed Utilities
+## Notes: Modular utility framework for WoW Classic Forever. Ships with a configurable Tooltip module.
+## Author: Needed Utilities Contributors
+## Version: 0.1.0-beta.1
+## SavedVariables: NeededUtilitiesDB
+## X-Website: https://github.com/bman013/needed-utilities
+
+Core\Version.lua
+Core\Core.lua
+Core\Config.lua
+Modules\Tooltip\Tooltip.lua
