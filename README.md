@@ -62,6 +62,25 @@ Adds a set of independently toggleable tooltip enhancements, all available in
 Each of these, plus a module-level enable/disable switch, is its own
 checkbox — nothing is bundled together.
 
+### Backpacks
+
+- **Allow moving the combined bags window** — hold Shift and drag the
+  "Combined Backpack" header (the row with the dropdown, at the top of the
+  combined bags window) to reposition it; a plain click still opens the
+  dropdown as normal. The drag handle deliberately only covers that header
+  row, not the whole bag frame — Shift+click on an item slot already links
+  it in chat, and this must not interfere with that. Position is saved and
+  restored automatically. Applies to the combined bags view specifically
+  (not the older per-bag windows).
+
+## About and Changelog panels
+
+Alongside each module's settings, `/nu config` includes an **About** page
+(addon name, version, description, and author, all read from the `.toc`,
+plus copyable links to report issues or find the author on GitHub) and a
+**Changelog** page — a scrollable, in-game copy of `CHANGELOG.md` so players
+can see what changed without leaving the game.
+
 ## Versioning
 
 The addon follows [Semantic Versioning](https://semver.org/)
@@ -151,9 +170,12 @@ NeededUtilities/            the addon itself (this folder is what gets zipped)
     Core.lua                 module registry, SavedVariables, slash commands
     Config.lua                shared options-panel helper
     About.lua                About page (addon info pulled from the .toc)
+    Changelog.lua            in-game Changelog page (kept in sync with CHANGELOG.md by hand)
   Modules/
     Tooltip/
       Tooltip.lua
+    Backpacks/
+      Backpacks.lua
 scripts/
   package.sh                 builds dist/NeededUtilities-<version>.zip
 ```

@@ -5,6 +5,20 @@ All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and version numbers follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.0-beta.5] - 2026-09-19
+
+### Added
+
+- **Backpacks module**: "Allow moving the combined bags window" setting.
+  Hold Shift and drag the "Combined Backpack" header to reposition the
+  combined bags window; a plain click still opens its dropdown as normal.
+  Position is saved and restored automatically. Deliberately scoped to just
+  the header row, not the whole bag frame, since Shift+click on an item
+  slot already links it in chat.
+- **Changelog panel**, listed directly under About, showing a scrollable
+  in-game copy of this file so players don't need to visit GitHub to see
+  what changed. Kept in sync by hand with `Core/Changelog.lua`.
+
 ## [0.1.0-beta.4] - 2026-09-19
 
 ### Fixed

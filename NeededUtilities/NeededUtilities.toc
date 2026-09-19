@@ -1,8 +1,8 @@
 ## Interface: 11507, 20504, 30403, 40402, 50500
 ## Title: Needed Utilities
-## Notes: Modular utility framework for WoW Classic Forever. Ships with a configurable Tooltip module.
+## Notes: Modular utility framework for WoW Classic Forever. Ships with Tooltip and Backpacks modules.
 ## Author: bman013
-## Version: 0.1.0-beta.4
+## Version: 0.1.0-beta.5
 ## SavedVariables: NeededUtilitiesDB
 ## X-Website: https://github.com/bman013/needed-utilities
 ## X-Author-URL: https://github.com/bman013/
@@ -11,4 +11,6 @@ Core\Version.lua
 Core\Core.lua
 Core\Config.lua
 Core\About.lua
+Core\Changelog.lua
 Modules\Tooltip\Tooltip.lua
+Modules\Backpacks\Backpacks.lua

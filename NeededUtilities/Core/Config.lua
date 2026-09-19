@@ -129,6 +129,48 @@ function Config:AddCopyBox(panel, label, value)
 	return box
 end
 
+--- Renders a scrolling, read-only list of {version, date, notes={...}}
+--- entries filling the rest of the panel below its title. Used for the
+--- Changelog panel, but generic enough for any module with a long block of
+--- text to show (a fixed canvas panel can't grow to fit it).
+function Config:AddChangelog(panel, entries)
+	local CONTENT_WIDTH = 520
+
+	local scrollFrame = CreateFrame("ScrollFrame", nil, panel, "UIPanelScrollFrameTemplate")
+	scrollFrame:SetPoint("TOPLEFT", 16, panel.nextY)
+	scrollFrame:SetPoint("BOTTOMRIGHT", -30, 16)
+
+	local content = CreateFrame("Frame", nil, scrollFrame)
+	content:SetWidth(CONTENT_WIDTH)
+	scrollFrame:SetScrollChild(content)
+
+	local y = 0
+	for _, entry in ipairs(entries) do
+		local heading = content:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+		heading:SetPoint("TOPLEFT", 0, y)
+		heading:SetWidth(CONTENT_WIDTH)
+		heading:SetJustifyH("LEFT")
+		heading:SetText(("v%s  |cff999999(%s)|r"):format(entry.version, entry.date))
+		y = y - heading:GetStringHeight() - 4
+
+		for _, line in ipairs(entry.notes) do
+			local fs = content:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+			fs:SetPoint("TOPLEFT", 12, y)
+			fs:SetWidth(CONTENT_WIDTH - 12)
+			fs:SetJustifyH("LEFT")
+			fs:SetText("- " .. line)
+			y = y - fs:GetStringHeight() - 4
+		end
+
+		y = y - 12
+	end
+
+	content:SetHeight(-y)
+	panel.nextY = 0
+
+	return content
+end
+
 function Config:Open()
 	EnsureRoot()
 	if useModernSettings then
