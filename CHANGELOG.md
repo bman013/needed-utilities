@@ -5,6 +5,25 @@ All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and version numbers follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.0-beta.9] - 2026-09-19
+
+### Fixed
+
+- **Bags**: unlocking still didn't let the combined bags window move for
+  some players. Two issues: the frame lookup assumed an exact global name
+  (`ContainerFrameCombinedBags`) that may not match every client, and
+  hooking the frame's own `OnMouseDown` only fires for clicks landing
+  somewhere no child widget (item slots, dropdown, search box) has already
+  claimed - if those cover the whole window, it never fires at all.
+  Replaced with: a name-agnostic frame finder (falls back to scanning every
+  existing frame via `EnumerateFrames` for one matching "CombinedBags"), and
+  a dedicated overlay frame layered above every child widget that reliably
+  wins hit-testing while unlocked, instead of hooking the container's own
+  mouse handler. While unlocked, the whole window is now a pure drag
+  handle (won't respond to item clicks); lock it again to resume normal use.
+- Added `/nubags` as a quick diagnostic - reports whether the combined bags
+  frame was found and hooked.
+
 ## [0.1.0-beta.8] - 2026-09-19
 
 ### Changed

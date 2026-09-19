@@ -6,6 +6,14 @@ local NU = ns.NU
 -- without visiting GitHub. Newest first.
 local ENTRIES = {
 	{
+		version = "0.1.0-beta.9",
+		date = "2026-09-19",
+		notes = {
+			"Fixed: unlocking still didn't let the combined bags window move for some players - frame lookup no longer assumes an exact name, and moving now uses an overlay layered above every child widget instead of hooking the window's own click handler. While unlocked, the whole window is now a pure drag handle.",
+			"Added: /nubags diagnostic command.",
+		},
+	},
+	{
 		version = "0.1.0-beta.8",
 		date = "2026-09-19",
 		notes = {

@@ -70,13 +70,15 @@ checkbox — nothing is bundled together.
 ### Bags
 
 - **Bags unlocked (drag to move)** — a lock/unlock toggle for the combined
-  bags window. While unlocked, click and drag anywhere on the window's
-  background (not on an item) to reposition it; item slots and the bag-view
-  dropdown are separate widgets and keep working normally either way.
-  Always resets to locked on login, but the position you leave it at is
-  saved and restored automatically. Toggle it from the checkbox in Bags
-  settings, or with a keybinding — see [Keybindings](#keybindings). Applies
-  to the combined bags view specifically (not the older per-bag windows).
+  bags window. While unlocked, click and drag anywhere on the window to
+  reposition it — the whole window is a drag handle while unlocked, so it
+  won't respond to item clicks until you lock it again. Always resets to
+  locked on login, but the position you leave it at is saved and restored
+  automatically. Toggle it from the checkbox in Bags settings, or with a
+  keybinding — see [Keybindings](#keybindings). Applies to the combined
+  bags view specifically (not the older per-bag windows). Run `/nubags` if
+  it ever reports not working — it says whether the combined bags frame
+  was actually found and hooked.
 
 ### Nameplates
 

@@ -15,6 +15,7 @@ local function db()
 end
 
 local combinedBagsFrame
+local dragOverlay
 local unlockLabel
 local unlockCheckbox
 local locked = true -- always starts locked each session; only the saved position persists
@@ -40,9 +41,18 @@ local function RestorePosition(frame)
 	frame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", saved.x / scale, saved.y / scale)
 end
 
+local function ApplyLockState()
+	if dragOverlay then
+		-- The overlay only intercepts clicks while unlocked; locked, it's
+		-- fully click-through so bag/item interaction is untouched.
+		dragOverlay:EnableMouse(not locked)
+	end
+	if unlockLabel then unlockLabel:SetShown(not locked) end
+end
+
 local function SetLocked(value)
 	locked = value
-	if unlockLabel then unlockLabel:SetShown(not locked) end
+	ApplyLockState()
 	if unlockCheckbox then unlockCheckbox:SetChecked(not locked) end
 end
 
@@ -51,7 +61,7 @@ function NeededUtilities_ToggleBagsLock()
 	local settings = db()
 	if not (settings and settings.enabled) then return end
 	SetLocked(not locked)
-	NU:Print(locked and "Bags locked." or "Bags unlocked - drag the combined bags window's background to move it.")
+	NU:Print(locked and "Bags locked." or "Bags unlocked - drag the combined bags window to move it.")
 end
 
 local frameHooked = false
@@ -62,37 +72,69 @@ local function HookCombinedBags(frame)
 
 	frame:SetMovable(true)
 	frame:SetClampedToScreen(true)
-	-- Ensures background clicks reach our handler below; item slots, the
-	-- dropdown, and the search box are separate child widgets that manage
-	-- their own mouse state independently, so this doesn't affect them.
-	frame:EnableMouse(true)
 	RestorePosition(frame)
+
+	-- A dedicated frame layered ABOVE every one of the bag window's own
+	-- child widgets (item slots, the dropdown, the search box) so it always
+	-- wins hit-testing regardless of whether those widgets happen to cover
+	-- the whole window - hooking the container's own OnMouseDown isn't
+	-- reliable, since it only fires for clicks that land somewhere no child
+	-- widget has already claimed. This overlay is the whole window while
+	-- unlocked (it deliberately blocks item clicks too - you're moving the
+	-- window, not using it, until you lock it again) and fully inert while
+	-- locked.
+	dragOverlay = CreateFrame("Frame", nil, frame)
+	dragOverlay:SetAllPoints(frame)
+	dragOverlay:SetFrameStrata(frame:GetFrameStrata())
+	dragOverlay:SetFrameLevel(frame:GetFrameLevel() + 50)
+	dragOverlay:EnableMouse(false)
+
+	dragOverlay:SetScript("OnMouseDown", function(self, button)
+		if button == "LeftButton" then
+			frame:StartMoving()
+		end
+	end)
+	dragOverlay:SetScript("OnMouseUp", function(self)
+		if frame:IsMoving() then
+			frame:StopMovingOrSizing()
+			SavePosition(frame)
+		end
+	end)
 
 	unlockLabel = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
 	unlockLabel:SetPoint("BOTTOM", frame, "TOP", 0, 4)
 	unlockLabel:SetTextColor(1, 0.82, 0)
-	unlockLabel:SetText("Bags unlocked - drag the background to move")
+	unlockLabel:SetText("Bags unlocked - drag anywhere on the window to move it")
 	unlockLabel:Hide()
 
-	-- HookScript (not SetScript) so we add to whatever Blizzard's own
-	-- handlers do here rather than replacing them.
-	frame:HookScript("OnMouseDown", function(self, button)
-		if button == "LeftButton" and not locked then
-			self:StartMoving()
+	ApplyLockState()
+end
+
+--- Finds the combined bags frame without assuming its exact global name -
+--- the fast path checks the name it has in current clients, and
+--- EnumerateFrames (which walks every existing frame) is a name-agnostic
+--- fallback matching anything with "CombinedBags" in its frame name.
+local function FindCombinedBagsFrame()
+	if _G.ContainerFrameCombinedBags then
+		return _G.ContainerFrameCombinedBags
+	end
+
+	local frame = EnumerateFrames()
+	while frame do
+		local name = frame.GetName and frame:GetName()
+		if name and name:find("CombinedBags") then
+			return frame
 		end
-	end)
-	frame:HookScript("OnMouseUp", function(self)
-		if self:IsMoving() then
-			self:StopMovingOrSizing()
-			SavePosition(self)
-		end
-	end)
+		frame = EnumerateFrames(frame)
+	end
+
+	return nil
 end
 
 --- The combined bags frame may not exist yet the moment we try (bag frames
 --- can be created lazily), so this gets retried on BAG_UPDATE until it works.
 local function TryHook()
-	local frame = _G.ContainerFrameCombinedBags
+	local frame = FindCombinedBagsFrame()
 	if not frame then return false end
 	HookCombinedBags(frame)
 	return true
@@ -107,7 +149,7 @@ local function BuildConfig()
 	NU.Config:AddModuleToggle(panel, "Bags")
 
 	unlockCheckbox = NU.Config:AddCheckbox(panel, "Bags unlocked (drag to move)",
-		"While checked, click and drag anywhere on the combined bags window's background (not on an item) to reposition it. Always resets to locked on login. You can also toggle this with a keybinding - see Game Menu > Key Bindings > AddOns > Needed Utilities.",
+		"While checked, click and drag anywhere on the combined bags window to reposition it (it won't respond to item clicks while unlocked). Always resets to locked on login. You can also toggle this with a keybinding - see Game Menu > Key Bindings > AddOns > Needed Utilities.",
 		function() return not locked end,
 		function(value) SetLocked(not value) end)
 end
@@ -123,5 +165,16 @@ function Bags:OnEnable()
 				self:UnregisterAllEvents()
 			end
 		end)
+	end
+end
+
+--- Quick diagnostic in case the combined bags frame still isn't found on a
+--- given client - reports what (if anything) was hooked.
+SLASH_NEEDEDUTILITIESBAGS1 = "/nubags"
+SlashCmdList["NEEDEDUTILITIESBAGS"] = function()
+	if combinedBagsFrame then
+		NU:Print(("Bags: hooked frame '%s'. Locked: %s"):format(combinedBagsFrame:GetName() or "<unnamed frame>", tostring(locked)))
+	else
+		NU:Print("Bags: combined bags frame not found yet. Open your bags (B) and run /nubags again.")
 	end
 end
