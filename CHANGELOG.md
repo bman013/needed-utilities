@@ -5,6 +5,21 @@ All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and version numbers follow [Semantic Versioning](https://semver.org/).
 
+## [0.2.0-beta.2] - 2026-09-19
+
+### Added
+
+- `/nu dump <module>` - prints a module's raw saved settings straight from
+  `NeededUtilitiesDB`, to check what's actually on disk versus what the
+  options panel shows. Added while investigating a report of Tooltip
+  settings appearing reset to defaults after updating; reviewed
+  `ApplyDefaults`/`InitializeDB`/both schema migrations and found no bug
+  that would explain a reset - WoW only writes SavedVariables to disk on
+  logout or `/reload`, so this is the more likely cause if a setting change
+  and an addon-folder swap happened without a save flushing in between.
+  This command makes that checkable directly instead of guessing from a
+  screenshot.
+
 ## [0.2.0-beta.1] - 2026-09-19
 
 ### Removed

@@ -6,6 +6,13 @@ local NU = ns.NU
 -- without visiting GitHub. Newest first.
 local ENTRIES = {
 	{
+		version = "0.2.0-beta.2",
+		date = "2026-09-19",
+		notes = {
+			"Added: /nu dump <module> - prints a module's raw saved settings, to check what's actually saved versus what the options panel shows.",
+		},
+	},
+	{
 		version = "0.2.0-beta.1",
 		date = "2026-09-19",
 		notes = {

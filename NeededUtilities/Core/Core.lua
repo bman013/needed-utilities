@@ -178,6 +178,18 @@ SlashCmdList["NEEDEDUTILITIES"] = function(msg)
 		NU:SetModuleEnabled(rest, true)
 	elseif cmd == "disable" and rest ~= "" then
 		NU:SetModuleEnabled(rest, false)
+	elseif cmd == "dump" and rest ~= "" then
+		local moduleDB = NU:GetModuleDB(rest)
+		if not moduleDB then
+			NU:Print(("Unknown module '%s'."):format(rest))
+		else
+			NU:Print(("Saved settings for '%s' (schemaVersion %s):"):format(rest, tostring(NU.db.schemaVersion)))
+			for key, value in pairs(moduleDB) do
+				if type(value) ~= "table" then
+					print(("  %s = %s"):format(key, tostring(value)))
+				end
+			end
+		end
 	elseif cmd == "config" or cmd == "options" or cmd == "" then
 		NU.Config:Open()
 	else
@@ -187,5 +199,6 @@ SlashCmdList["NEEDEDUTILITIES"] = function(msg)
 		print("  /nu modules         - list modules and their state")
 		print("  /nu enable <name>   - enable a module")
 		print("  /nu disable <name>  - disable a module")
+		print("  /nu dump <name>     - print a module's raw saved settings")
 	end
 end
