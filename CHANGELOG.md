@@ -5,6 +5,16 @@ All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and version numbers follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.0-beta.8] - 2026-09-19
+
+### Changed
+
+- Options panel now groups every feature module (Tooltip, Bags,
+  Nameplates) under a nested "Modules" category, separate from framework
+  pages (About, Changelog) which stay directly under "Needed Utilities" -
+  matching the requested layout. `Config:RegisterModulePanel` takes a new
+  `underModules` flag; every module now passes it.
+
 ## [0.1.0-beta.7] - 2026-09-19
 
 ### Added

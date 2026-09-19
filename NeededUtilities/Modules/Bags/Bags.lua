@@ -103,7 +103,7 @@ local function BuildConfig()
 	if configBuilt then return end
 	configBuilt = true
 
-	local panel = NU.Config:RegisterModulePanel("Bags", "Bags")
+	local panel = NU.Config:RegisterModulePanel("Bags", "Bags", true)
 	NU.Config:AddModuleToggle(panel, "Bags")
 
 	unlockCheckbox = NU.Config:AddCheckbox(panel, "Bags unlocked (drag to move)",

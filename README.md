@@ -182,7 +182,7 @@ Then:
 3. Optionally add an options page from `OnEnable`:
 
    ```lua
-   local panel = NU.Config:RegisterModulePanel("MyModule", "My Module")
+   local panel = NU.Config:RegisterModulePanel("MyModule", "My Module", true) -- true nests it under "Modules"
    NU.Config:AddModuleToggle(panel, "My Module") -- the "Enable" switch
 
    NU.Config:AddCheckbox(panel, "Some setting", "What it does.",

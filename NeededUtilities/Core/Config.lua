@@ -8,6 +8,7 @@ local ROOT_NAME = "Needed Utilities"
 local useModernSettings = Settings and Settings.RegisterCanvasLayoutCategory and Settings.RegisterCanvasLayoutSubcategory
 
 local rootCategory
+local modulesCategory
 local panels = {}
 
 local function CreatePanel(displayName)
@@ -56,13 +57,47 @@ local function EnsureRoot()
 	return rootCategory
 end
 
---- Called once per module (typically from the module's OnEnable) to create a
---- dedicated options page nested under the "Needed Utilities" category.
---- Returns a plain frame the module can add widgets to via AddCheckbox.
-function Config:RegisterModulePanel(moduleKey, displayName)
-	if panels[moduleKey] then return panels[moduleKey].panel end
+local MODULES_NAME = "Modules"
+
+--- The "Modules" group nested under the root category, holding every actual
+--- feature module's panel (Tooltip, Bags, Nameplates, ...) separately from
+--- framework pages like About/Changelog that sit directly under the root.
+local function EnsureModulesCategory()
+	if modulesCategory then return modulesCategory end
 
 	local root = EnsureRoot()
+	local panel = CreatePanel(MODULES_NAME)
+
+	local title = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+	title:SetPoint("TOPLEFT", 16, -16)
+	title:SetText(MODULES_NAME)
+
+	local subtitle = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+	subtitle:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -8)
+	subtitle:SetPoint("RIGHT", -16, 0)
+	subtitle:SetJustifyH("LEFT")
+	subtitle:SetText("Feature modules. Select one on the left to configure it.")
+
+	if useModernSettings then
+		modulesCategory = Settings.RegisterCanvasLayoutSubcategory(root, panel, MODULES_NAME)
+	else
+		panel.parent = ROOT_NAME
+		InterfaceOptions_AddCategory(panel)
+		modulesCategory = { panel = panel }
+	end
+
+	return modulesCategory
+end
+
+--- Called once per module (typically from the module's OnEnable) to create a
+--- dedicated options page. Pass underModules = true (every actual feature
+--- module should) to nest it under the "Modules" group; framework pages
+--- like About/Changelog omit it to sit directly under the root category.
+--- Returns a plain frame the module can add widgets to via AddCheckbox.
+function Config:RegisterModulePanel(moduleKey, displayName, underModules)
+	if panels[moduleKey] then return panels[moduleKey].panel end
+
+	local parent = underModules and EnsureModulesCategory() or EnsureRoot()
 	local panel = CreatePanel(displayName)
 	panel.moduleKey = moduleKey
 
@@ -72,9 +107,9 @@ function Config:RegisterModulePanel(moduleKey, displayName)
 	panel.nextY = -48
 
 	if useModernSettings then
-		panels[moduleKey] = { panel = panel, category = Settings.RegisterCanvasLayoutSubcategory(root, panel, displayName) }
+		panels[moduleKey] = { panel = panel, category = Settings.RegisterCanvasLayoutSubcategory(parent, panel, displayName) }
 	else
-		panel.parent = ROOT_NAME
+		panel.parent = underModules and MODULES_NAME or ROOT_NAME
 		InterfaceOptions_AddCategory(panel)
 		panels[moduleKey] = { panel = panel }
 	end

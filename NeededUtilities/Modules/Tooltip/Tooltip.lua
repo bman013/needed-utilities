@@ -174,7 +174,7 @@ local function BuildConfig()
 	if configBuilt then return end
 	configBuilt = true
 
-	local panel = NU.Config:RegisterModulePanel("Tooltip", "Tooltip")
+	local panel = NU.Config:RegisterModulePanel("Tooltip", "Tooltip", true)
 	NU.Config:AddModuleToggle(panel, "Tooltip")
 
 	NU.Config:AddCheckbox(panel, "Anchor tooltip to mouse", "Keeps the tooltip attached to the cursor instead of its default screen position.",

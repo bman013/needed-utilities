@@ -115,7 +115,7 @@ local function BuildConfig()
 	if configBuilt then return end
 	configBuilt = true
 
-	local panel = NU.Config:RegisterModulePanel("Nameplates", "Nameplates")
+	local panel = NU.Config:RegisterModulePanel("Nameplates", "Nameplates", true)
 	NU.Config:AddModuleToggle(panel, "Nameplates")
 
 	NU.Config:AddCheckbox(panel, "Highlight quest-objective mobs", "Adds a gold border to the nameplate of any mob relevant to one of your current quests, so you can prioritise it at a glance.",

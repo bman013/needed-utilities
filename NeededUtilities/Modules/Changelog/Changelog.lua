@@ -6,6 +6,13 @@ local NU = ns.NU
 -- without visiting GitHub. Newest first.
 local ENTRIES = {
 	{
+		version = "0.1.0-beta.8",
+		date = "2026-09-19",
+		notes = {
+			"Changed: options panel now groups every feature module (Tooltip, Bags, Nameplates) under a nested \"Modules\" category, separate from framework pages (About, Changelog) which stay directly under Needed Utilities.",
+		},
+	},
+	{
 		version = "0.1.0-beta.7",
 		date = "2026-09-19",
 		notes = {
